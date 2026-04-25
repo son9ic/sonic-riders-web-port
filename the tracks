@@ -1,0 +1,170 @@
+index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sonic Riders Web</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; font-family: monospace; }
+        #ui { position: absolute; top: 10px; left: 10px; color: white; background: rgba(0,0,0,0.7); padding: 10px; border: 2px solid cyan; z-index: 10; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <b>MAP: <span id="mapName">METAL CITY</span></b><br>
+        AIR: <span id="air">100</span> | 1, 2, 3 TO SWITCH MAPS
+    </div>
+    <canvas id="game"></canvas>
+
+    <script>
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const maps = {
+            1: { name: "METAL CITY", sky: "#000033", road1: "#333", road2: "#444", border: "yellow" },
+            2: { name: "SPLASH CANYON", sky: "#00ccff", road1: "#1e5d1e", road2: "#2e7d2e", border: "white" },
+            3: { name: "EGG FACTORY", sky: "#440000", road1: "#111", road2: "#880000", border: "orange" }
+        };
+
+        let currentMap = maps;
+        let playerX = 0;
+        let trackPos = 0;
+        let air = 100;
+        let tilt = 0;
+
+        function loop() {
+            ctx.fillStyle = currentMap.sky;
+            ctx.fillRect(0, 0, canvas.width, canvas.height/2);
+
+            for (let i = 0; i < 50; i++) {
+                let y = canvas.height/2 + (i * 10);
+                let width = 20 + (i * i * 0.5);
+                let x = (canvas.width / 2) + (playerX * i);
+
+                ctx.fillStyle = (Math.floor(trackPos + i) % 2 === 0) ? currentMap.road1 : currentMap.road2;
+                ctx.fillRect(x - width/2, y, width, 10);
+
+                ctx.fillStyle = currentMap.border;
+                ctx.fillRect(x - width/2 - 5, y, 5, 10);
+                ctx.fillRect(x + width/2, y, 5, 10);
+            }
+
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height - 100);
+            ctx.rotate(tilt);
+
+            ctx.fillStyle = "#00FF00";
+            ctx.beginPath();
+            ctx.ellipse(0, 15, 35, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "white";
+            ctx.stroke();
+
+            ctx.fillStyle = "#0000FF";
+            ctx.fillRect(-10, -30, 20, 35); 
+            
+            ctx.beginPath();
+            ctx.arc(0, -35, 15, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = "red";
+            ctx.fillRect(-12, 5, 10, 8);
+            ctx.fillRect(2, 5, 10, 8);
+
+            ctx.restore();
+
+            trackPos += 0.4;
+            if(air > 0) air -= 0.005;
+            document.getElementById('air').innerText = Math.floor(air);
+            document.getElementById('mapName').innerText = currentMap.name;
+            
+            requestAnimationFrame(loop);
+        }
+
+        window.onkeydown = (e) => {
+            if(e.key === "ArrowLeft") { playerX += 1.8; tilt = -0.2; }
+            if(e.key === "ArrowRight") { playerX -= 1.8; tilt = 0.2; }
+            if(e.key === "1") currentMap = maps;
+            if(e.key === "2") currentMap = maps;
+            if(e.key === "3") currentMap = maps;
+        };
+
+        window.onkeyup = () => { tilt = 0; };
+
+        loop();
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sonic Riders: Multi-Map Port</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; font-family: monospace; }
+        #ui { position: absolute; top: 10px; left: 10px; color: white; background: rgba(0,0,0,0.7); padding: 10px; border: 2px solid cyan; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <b>MAP: <span id="mapName">METAL CITY</span></b><br>
+        AIR: <span id="air">100</span> | PRESS 1, 2, or 3 TO SWITCH
+    </div>
+    <canvas id="game"></canvas>
+
+    <script>
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const maps = {
+            1: { name: "METAL CITY", sky: "#000033", road1: "#333", road2: "#444", border: "yellow" },
+            2: { name: "SPLASH CANYON", sky: "#00ccff", road1: "#1e5d1e", road2: "#2e7d2e", border: "white" },
+            3: { name: "EGG FACTORY", sky: "#440000", road1: "#111", road2: "#880000", border: "orange" }
+        };
+
+        let currentMap = maps;
+        let playerX = 0;
+        let trackPos = 0;
+
+        function loop() {
+            // Draw Sky
+            ctx.fillStyle = currentMap.sky;
+            ctx.fillRect(0, 0, canvas.width, canvas.height/2);
+
+            // Draw Road
+            for (let i = 0; i < 50; i++) {
+                let y = canvas.height/2 + (i * 10);
+                let width = 20 + (i * i * 0.5);
+                let x = (canvas.width / 2) + (playerX * i);
+
+                ctx.fillStyle = (Math.floor(trackPos + i) % 2 === 0) ? currentMap.road1 : currentMap.road2;
+                ctx.fillRect(x - width/2, y, width, 10);
+
+                ctx.fillStyle = currentMap.border;
+                ctx.fillRect(x - width/2 - 5, y, 5, 10);
+                ctx.fillRect(x + width/2, y, 5, 10);
+            }
+
+            // Draw Board
+            ctx.fillStyle = "blue";
+            ctx.fillRect(canvas.width/2 - 25, canvas.height - 100, 50, 15);
+
+            trackPos += 0.4;
+            document.getElementById('mapName').innerText = currentMap.name;
+            requestAnimationFrame(loop);
+        }
+
+        window.onkeydown = (e) => {
+            if(e.key === "ArrowLeft") playerX += 2;
+            if(e.key === "ArrowRight") playerX -= 2;
+            if(e.key === "1") currentMap = maps;
+            if(e.key === "2") currentMap = maps;
+            if(e.key === "3") currentMap = maps;
+        };
+
+        loop();
+    </script>
+</body>
+</html>
