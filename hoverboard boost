@@ -1,0 +1,84 @@
+        let speed = 0.4;
+        let isBoosting = false;
+        let air = 100;
+
+        function updateBoost() {
+            if (isBoosting && air > 0) {
+                speed = 1.5;
+                air -= 0.1;
+            } else {
+                speed = 0.4;
+                isBoosting = false;
+            }
+            document.getElementById('air').innerText = Math.floor(air);
+        }
+
+        function drawHoverboardEffects(ctx, isBoosting) {
+            if (isBoosting) {
+                ctx.save();
+                ctx.shadowBlur = 30;
+                ctx.shadowColor = "#ffaa00";
+                
+                ctx.fillStyle = "rgba(255, 170, 0, 0.6)";
+                ctx.beginPath();
+                ctx.moveTo(-15, 15);
+                ctx.lineTo(0, 80);
+                ctx.lineTo(15, 15);
+                ctx.fill();
+
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.ellipse(0, 10, 45, 15, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+        window.addEventListener("keydown", (e) => {
+            if (e.key === " ") isBoosting = true;
+        });
+
+        window.addEventListener("keyup", (e) => {
+            if (e.key === " ") isBoosting = false;
+        });
+let boostMeter = 100; 
+
+function updateBoostColor(val) {
+    if (val > 80) return "#90EE90"; // Light Green
+    if (val > 60) return "#006400"; // Dark Green
+    if (val > 40) return "#FFFF00"; // Yellow
+    if (val > 20) return "#FFA500"; // Orange
+    if (val > 5)  return "#FF0000"; // Red
+    return "#000000";               // Black
+}
+function collectRing() {
+    if (boostMeter < 100) {
+        boostMeter += 10; // Refills by 10%
+        if (boostMeter > 100) boostMeter = 100;
+        
+        // Update the visual bar color immediately
+        let bar = document.getElementById('boost-fill');
+        bar.style.background = updateBoostColor(boostMeter);
+    }
+}
+#boost-container {
+    width: 150px;
+    height: 12px;
+    background: #222;
+    border: 2px solid #fff;
+    margin-top: 5px;
+}
+
+#boost-fill {
+    height: 100%;
+    width: 100%;
+    background: #90EE90;
+    transition: background 0.2s;
+}
+if (isBoosting && boostMeter > 0) {
+    gameSpeed = 1.5;
+    boostMeter -= 0.15; // Slowly drains toward black
+} else {
+    gameSpeed = 0.4;
+    isBoosting = false;
+}
