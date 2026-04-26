@@ -1,0 +1,3 @@
+if (e.key === "s") currentHero = "sonic";
+if (e.key === "t") currentHero = "tails";
+if (e.key === "k") currentHero = "knuckles";
